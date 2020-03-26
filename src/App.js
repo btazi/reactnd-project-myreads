@@ -19,6 +19,11 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
         {this.state.showSearchPage ? <SearchScreen /> : <HomeScreen />}
+        <div className="open-search">
+          <button onClick={() => this.setState({ showSearchPage: true })}>
+            Add a book
+          </button>
+        </div>
       </div>
     );
   }
