@@ -12,6 +12,10 @@ class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
+    this.getAllBooks();
+  }
+
+  getAllBooks() {
     BooksAPI.getAll().then(books => {
       this.setState(() => ({
         books,
@@ -19,6 +23,25 @@ class HomeScreen extends React.Component {
       }));
     });
   }
+
+  handleBookUpdate = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(resp => {
+      // if there is a response it means that the book has been updated succesfully on the server. It is possible to fetch all books again but that would add an unnecessary request to the server
+      this.setState(state => {
+        return {
+          ...state,
+          books: state.books.map(b => {
+            if (book === b) {
+              // if method book then change shelf
+              return { ...book, shelf: shelf };
+            } else {
+              return b;
+            }
+          })
+        };
+      });
+    });
+  };
 
   render() {
     const { books, shelves } = this.state;
@@ -32,6 +55,8 @@ class HomeScreen extends React.Component {
             <Shelf
               books={books.filter(book => book.shelf === shelf)}
               shelfTitle={_.startCase(shelf)}
+              onBookUpdate={this.handleBookUpdate}
+              key={shelf}
             />
           ))}
         </div>
