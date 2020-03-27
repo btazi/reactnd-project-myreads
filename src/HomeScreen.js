@@ -1,8 +1,7 @@
 import React from "react";
-// import * as BooksAPI from './BooksAPI'
+import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 import Shelf from "./Shelf";
-import * as BooksAPI from "./BooksAPI";
 import _ from "lodash";
 
 class HomeScreen extends React.Component {
@@ -15,12 +14,21 @@ class HomeScreen extends React.Component {
     this.getAllBooks();
   }
 
+  updateShelves = () => {
+    this.setState(state => ({
+      shelves: _.uniq(state.books.map(book => book.shelf))
+    }));
+  };
+
   getAllBooks() {
     BooksAPI.getAll().then(books => {
-      this.setState(() => ({
-        books,
-        shelves: _.uniq(books.map(book => book.shelf))
-      }));
+      this.setState(
+        state => ({
+          ...state,
+          books
+        }),
+        this.updateShelves
+      );
     });
   }
 
@@ -39,7 +47,7 @@ class HomeScreen extends React.Component {
             }
           })
         };
-      });
+      }, this.updateShelves);
     });
   };
 
