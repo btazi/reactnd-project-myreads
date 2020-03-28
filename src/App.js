@@ -38,18 +38,26 @@ class BooksApp extends React.Component {
 
   handleBookUpdate = (book, shelf) => {
     BooksAPI.update(book, shelf).then(resp => {
-      // if there is a response it means that the book has been updated succesfully on the server. It is possible to fetch all books again but that would add an unnecessary request to the server
+      // after updating the book on the server add changes locally without reusing the api (getAll())
       this.setState(state => {
-        return {
-          ...state,
-          books: state.books.map(b => {
-            if (book.id === b.id) {
-              // if method book then change shelf
+        let books = [];
+        if (book.shelf === "none") {
+          // if book isn't in collection add it
+          const newBook = { ...book, shelf };
+          books = [...state.books, newBook];
+        } else {
+          // if book is in collection update shelf only
+          books = state.books.map(b => {
+            if (b.id === book.id) {
               return { ...b, shelf };
             } else {
               return b;
             }
-          })
+          });
+        }
+        return {
+          ...state,
+          books
         };
       }, this.updateShelves);
     });
