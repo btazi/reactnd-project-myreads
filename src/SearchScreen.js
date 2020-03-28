@@ -21,28 +21,38 @@ class SearchScreen extends React.Component {
   componentDidUpdate(prevProps, prevstate) {
     // this referesh books when a book shelf is updated
     if (prevProps.books !== this.props.books) {
-      this.searchBooks();
+      this.mergeBooks(this.props.books, this.state.foundBooks);
     }
   }
 
+  // this method does 3 things:
+  // 1) replaces books in search result with books from props
+  // 2) adds {shelf: "none"} to the other books in result
+  // 3) updates foundBooks in state
+  mergeBooks = (collectionBooks, searchedBooks) => {
+    const collectionBooksIds = collectionBooks.map(b => b.id);
+    const foundBooks = searchedBooks.map(book => {
+      if (_.includes(collectionBooksIds, book.id)) {
+        // 1) replaces books in search result with books from props
+        return _.find(this.props.books, { id: book.id });
+      } else {
+        // 2) adds {shelf: "none"} to the other books in result
+        return { ...book, shelf: "none" }; // if book is not in collection
+      }
+    });
+    // 3) updates foundBooks in state
+    this.setState(state => {
+      return {
+        ...state,
+        foundBooks
+      };
+    });
+  };
+
   searchBooks = () => {
-    const collectionBooksIds = this.props.books.map(b => b.id);
     BooksAPI.search(this.state.query).then(resp => {
       if (typeof resp === "object") {
-        const foundBooks = resp.map(book => {
-          // add shelf to searched books
-          if (_.includes(collectionBooksIds, book.id)) {
-            return _.find(this.props.books, { id: book.id }); // if book is in collection return collection book
-          } else {
-            return { ...book, shelf: "none" }; // if book is not in collection
-          }
-        });
-        this.setState(state => {
-          return {
-            ...state,
-            foundBooks
-          };
-        });
+        this.mergeBooks(this.props.books, resp);
       }
     });
   };
