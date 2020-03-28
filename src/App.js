@@ -5,6 +5,7 @@ import * as BooksAPI from "./BooksAPI";
 import SearchScreen from "./SearchScreen";
 import _ from "lodash";
 import HomeScreen from "./HomeScreen";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 class BooksApp extends React.Component {
   state = {
@@ -58,20 +59,23 @@ class BooksApp extends React.Component {
     const { books, shelves } = this.state;
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <SearchScreen books={books} onBookUpdate={this.handleBookUpdate} />
-        ) : (
-          <HomeScreen
-            books={books}
-            shelves={shelves}
-            onBookUpdate={this.handleBookUpdate}
-          />
-        )}
-        <div className="open-search">
-          <button onClick={() => this.setState({ showSearchPage: true })}>
-            Add a book
-          </button>
-        </div>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/search">
+              <SearchScreen
+                books={books}
+                onBookUpdate={this.handleBookUpdate}
+              />
+            </Route>
+            <Route exact path="/">
+              <HomeScreen
+                books={books}
+                shelves={shelves}
+                onBookUpdate={this.handleBookUpdate}
+              />
+            </Route>
+          </Switch>
+        </BrowserRouter>
       </div>
     );
   }

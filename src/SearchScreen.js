@@ -1,6 +1,7 @@
 import React from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
+import NavButton from "./NavButton";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import "./App.css";
@@ -85,6 +86,7 @@ class SearchScreen extends React.Component {
             ))}
           </ol>
         </div>
+        <NavButton path="/" text="return to collection" />
       </div>
     );
   }
