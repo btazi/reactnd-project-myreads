@@ -66,7 +66,7 @@ class Book extends React.Component {
 
 Book.propTypes = {
   book: PropTypes.object.isRequired,
-  onBookUpdate: PropTypes.fund.isRequired
+  onBookUpdate: PropTypes.func.isRequired
 };
 
 export default Book;
