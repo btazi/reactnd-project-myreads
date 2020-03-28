@@ -1,7 +1,7 @@
 import React from "react";
 
-// import * as BooksAPI from './BooksAPI'
 import "./App.css";
+import PropTypes from "prop-types";
 
 class Book extends React.Component {
   state = {
@@ -10,9 +10,17 @@ class Book extends React.Component {
 
   componentDidMount() {
     this.setState(() => ({
-      selectedShelf: this.props.book.shelf
+      selectedShelf: this.props.book.shelf || "none"
     }));
   }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.props.book.shelf !== this.state.selectedShelf) {
+      this.setState(() => ({
+        selectedShelf: this.props.book.shelf
+      }));
+    }
+  };
 
   handleShelfChange = event => {
     this.props.onBookUpdate(this.props.book, event.target.value);
@@ -30,7 +38,8 @@ class Book extends React.Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url("${book.imageLinks.smallThumbnail}")`
+                backgroundImage: `url("${book.imageLinks &&
+                  book.imageLinks.smallThumbnail}")`
               }}
             />
             <div className="book-shelf-changer">
@@ -46,11 +55,18 @@ class Book extends React.Component {
             </div>
           </div>
           <div className="book-title">{book.title}</div>
-          <div className="book-authors">{book.authors.join(", ")}</div>
+          <div className="book-authors">
+            {book.authors && book.authors.join(", ")}
+          </div>
         </div>
       </li>
     );
   }
 }
+
+Book.propTypes = {
+  book: PropTypes.object.isRequired,
+  onBookUpdate: PropTypes.fund.isRequired
+};
 
 export default Book;
