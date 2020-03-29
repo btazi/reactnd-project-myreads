@@ -27,7 +27,7 @@ The backend API uses a fixed set of cached search results and is limited to a pa
 
 ## Backend Server
 
-To simplify your development process, we've provided a backend server for you to develop against. The provided file [`BooksAPI.js`](src/BooksAPI.js) contains the methods you will need to perform necessary operations on the backend:
+A backend server was provided with the following methods:
 
 - [`getAll`](#getall)
 - [`update`](#update)
