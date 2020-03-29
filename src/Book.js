@@ -1,34 +1,14 @@
 import React from "react";
-
 import "./App.css";
 import PropTypes from "prop-types";
 
 class Book extends React.Component {
-  state = {
-    selectedShelf: ""
-  };
-
-  componentDidMount() {
-    this.setState(() => ({
-      selectedShelf: this.props.book.shelf || "none"
-    }));
-  }
-
-  componentDidUpdate = (prevProps, prevState) => {
-    if (this.props.book.shelf !== this.state.selectedShelf) {
-      this.setState(() => ({
-        selectedShelf: this.props.book.shelf
-      }));
-    }
-  };
-
   handleShelfChange = event => {
     this.props.onBookUpdate(this.props.book, event.target.value);
   };
 
   render() {
     const { book } = this.props;
-    const { selectedShelf } = this.state;
     return (
       <li>
         <div className="book">
@@ -43,7 +23,10 @@ class Book extends React.Component {
               }}
             />
             <div className="book-shelf-changer">
-              <select onChange={this.handleShelfChange} value={selectedShelf}>
+              <select
+                onChange={this.handleShelfChange}
+                value={book.shelf || "none"}
+              >
                 <option value="move" disabled>
                   Move to...
                 </option>
