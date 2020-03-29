@@ -30,11 +30,7 @@ const HomeScreen = props => {
 
 HomeScreen.propTypes = {
   books: PropTypes.array.isRequired,
-<<<<<<< HEAD
   onBookUpdate: PropTypes.func.isRequired
-=======
-  onBookUpdate: PropTypes.fund.isRequired
->>>>>>> 7c00fba48c43d43327f2fbb38910381729c861cc
 };
 
 export default HomeScreen;
