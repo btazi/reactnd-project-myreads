@@ -3,36 +3,25 @@ import React from "react";
 import "./App.css";
 import * as BooksAPI from "./BooksAPI";
 import SearchScreen from "./SearchScreen";
-import _ from "lodash";
 import HomeScreen from "./HomeScreen";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 class BooksApp extends React.Component {
   state = {
     showSearchPage: false,
-    books: [],
-    shelves: []
+    books: []
   };
 
   componentDidMount() {
     this.getAllBooks();
   }
 
-  updateShelves = () => {
-    this.setState(state => ({
-      shelves: _.uniq(state.books.map(book => book.shelf))
-    }));
-  };
-
   getAllBooks() {
     BooksAPI.getAll().then(books => {
-      this.setState(
-        state => ({
-          ...state,
-          books
-        }),
-        this.updateShelves
-      );
+      this.setState(state => ({
+        ...state,
+        books
+      }));
     });
   }
 

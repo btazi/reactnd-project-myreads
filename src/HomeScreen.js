@@ -6,14 +6,15 @@ import PropTypes from "prop-types";
 import NavButton from "./NavButton";
 
 const HomeScreen = props => {
-  const { books, shelves, onBookUpdate } = props;
+  const { books, onBookUpdate } = props;
+  const displayedShelves = ["currentlyReading", "wantToRead", "read"];
   return (
     <div className="list-books">
       <div className="list-books-title">
         <h1>MyReads</h1>
       </div>
       <div className="list-books-content">
-        {shelves.map(shelf => (
+        {displayedShelves.map(shelf => (
           <Shelf
             books={books.filter(book => book.shelf === shelf)}
             shelfTitle={_.startCase(shelf)}
