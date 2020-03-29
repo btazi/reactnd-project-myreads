@@ -30,7 +30,7 @@ const HomeScreen = props => {
 
 HomeScreen.propTypes = {
   books: PropTypes.array.isRequired,
-  shelves: PropTypes.array.isRequired
+  onBookUpdate: PropTypes.fund.isRequired
 };
 
 export default HomeScreen;
