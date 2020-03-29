@@ -1,10 +1,10 @@
 import React from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
-import NavButton from "./NavButton";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import "./App.css";
+import { withRouter } from "react-router-dom";
 
 class SearchScreen extends React.Component {
   state = { foundBooks: [], query: "" };
@@ -66,7 +66,7 @@ class SearchScreen extends React.Component {
         <div className="search-books-bar">
           <button
             className="close-search"
-            onClick={() => this.setState({ showSearchPage: false })}
+            onClick={() => this.props.history.push("/")}
           >
             Close
           </button>
@@ -86,7 +86,6 @@ class SearchScreen extends React.Component {
             ))}
           </ol>
         </div>
-        <NavButton path="/" text="return to collection" />
       </div>
     );
   }
@@ -97,4 +96,4 @@ SearchScreen.propTypes = {
   onBookUpdate: PropTypes.func.isRequired
 };
 
-export default SearchScreen;
+export default withRouter(SearchScreen);
