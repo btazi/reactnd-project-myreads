@@ -32,16 +32,18 @@ class SearchScreen extends React.Component {
   // 3) updates foundBooks in state
   mergeBooks = (collectionBooks, searchedBooks) => {
     const collectionBooksIds = collectionBooks.map(b => b.id);
-    const foundBooks = searchedBooks.map(book => {
-      if (_.includes(collectionBooksIds, book.id)) {
-        // 1) replaces books in search result with books from props
-        return _.find(this.props.books, { id: book.id });
-      } else {
-        // 2) adds {shelf: "none"} to the other books in result
-        return { ...book, shelf: "none" }; // if book is not in collection
-      }
-    });
-    // 3) updates foundBooks in state
+    let foundBooks = [];
+    if (searchedBooks.length > 0) {
+      foundBooks = searchedBooks.map(book => {
+        if (_.includes(collectionBooksIds, book.id)) {
+          // 1) replaces books in search result with books from props
+          return _.find(this.props.books, { id: book.id });
+        } else {
+          // 2) adds {shelf: "none"} to the other books in result
+          return { ...book, shelf: "none" }; // if book is not in collection
+        }
+      });
+    } // 3) updates foundBooks in state
     this.setState(state => {
       return {
         ...state,
@@ -53,7 +55,16 @@ class SearchScreen extends React.Component {
   searchBooks = () => {
     BooksAPI.search(this.state.query).then(resp => {
       if (typeof resp === "object") {
+        // merge books even if the resp is an empty array []
         this.mergeBooks(this.props.books, resp);
+      } else {
+        // if there is an error (typeof(resp) === "undefined") return an empty array
+        this.setState(state => {
+          return {
+            ...state,
+            foundBooks: []
+          };
+        });
       }
     });
   };
