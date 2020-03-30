@@ -5,8 +5,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import NavButton from "./NavButton";
 
-const HomeScreen = props => {
-  const { books, onBookUpdate } = props;
+const HomeScreen = ({ books, onBookUpdate }) => {
   const displayedShelves = ["currentlyReading", "wantToRead", "read"];
   return (
     <div className="list-books">

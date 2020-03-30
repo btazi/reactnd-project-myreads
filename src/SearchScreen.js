@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
 import PropTypes from "prop-types";
@@ -6,101 +6,86 @@ import _ from "lodash";
 import "./App.css";
 import { withRouter } from "react-router-dom";
 
-class SearchScreen extends React.Component {
-  state = { foundBooks: [], query: "" };
+const SearchScreen = ({ books, onBookUpdate, history }) => {
+  const [foundBooks, updateFoundBooks] = useState([]);
+  const [query, updateQuery] = useState("");
+  const [prevBooks, updatePrevBooks] = useState([]);
 
-  handleQueryChange = event => {
+  const handleQueryChange = event => {
     const query = event.target.value;
-    this.setState(
-      state => {
-        return { ...state, query };
-      },
-      () => this.searchBooks()
-    );
+    updateQuery(query);
   };
 
-  componentDidUpdate(prevProps, prevstate) {
-    // this referesh books when a book shelf is updated
-    if (prevProps.books !== this.props.books) {
-      this.mergeBooks(this.props.books, this.state.foundBooks);
-    }
-  }
+  useEffect(
+    () => {
+      searchBooks();
+    },
+    [query]
+  );
 
   // this method does 3 things:
   // 1) replaces books in search result with books from props
   // 2) adds {shelf: "none"} to the other books in result
   // 3) updates foundBooks in state
-  mergeBooks = (collectionBooks, searchedBooks) => {
+  const mergeBooks = (collectionBooks, searchedBooks) => {
     const collectionBooksIds = collectionBooks.map(b => b.id);
     let foundBooks = [];
     if (searchedBooks.length > 0) {
       foundBooks = searchedBooks.map(book => {
         if (_.includes(collectionBooksIds, book.id)) {
           // 1) replaces books in search result with books from props
-          return _.find(this.props.books, { id: book.id });
+          return _.find(books, { id: book.id });
         } else {
           // 2) adds {shelf: "none"} to the other books in result
           return { ...book, shelf: "none" }; // if book is not in collection
         }
       });
     } // 3) updates foundBooks in state
-    this.setState(state => {
-      return {
-        ...state,
-        foundBooks
-      };
-    });
+    updateFoundBooks(foundBooks);
   };
 
-  searchBooks = () => {
-    BooksAPI.search(this.state.query).then(resp => {
+  if (books !== prevBooks) {
+    mergeBooks(books, foundBooks);
+    updatePrevBooks(books);
+  }
+
+  const searchBooks = () => {
+    BooksAPI.search(query).then(resp => {
       if (typeof resp === "object") {
         // merge books even if the resp is an empty array []
-        this.mergeBooks(this.props.books, resp);
+        mergeBooks(books, resp);
       } else {
         // if there is an error (typeof(resp) === "undefined") return an empty array
-        this.setState(state => {
-          return {
-            ...state,
-            foundBooks: []
-          };
-        });
+        updateFoundBooks([]);
       }
     });
   };
 
-  render() {
-    const { foundBooks, query } = this.state;
-    const { onBookUpdate } = this.props;
-    return (
-      <div className="search-books">
-        <div className="search-books-bar">
-          <button
-            className="close-search"
-            onClick={() => this.props.history.push("/")}
-          >
-            Close
-          </button>
-          <div className="search-books-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search by title or author"
-              value={query}
-              onChange={this.handleQueryChange}
-            />
-          </div>
-        </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-            {foundBooks.map(book => (
-              <Book key={book.id} book={book} onBookUpdate={onBookUpdate} />
-            ))}
-          </ol>
+  return (
+    <div className="search-books">
+      <div className="search-books-bar">
+        <button className="close-search" onClick={() => history.push("/")}>
+          Close
+        </button>
+        <div className="search-books-input-wrapper">
+          <input
+            type="text"
+            placeholder="Search by title or author"
+            value={query}
+            onChange={handleQueryChange}
+          />
         </div>
       </div>
-    );
-  }
-}
+      <div className="search-books-results">
+        <ol className="books-grid">
+          {foundBooks.map(book => (
+            <Book key={book.id} book={book} onBookUpdate={onBookUpdate} />
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+};
 
 SearchScreen.propTypes = {
   books: PropTypes.array.isRequired,
